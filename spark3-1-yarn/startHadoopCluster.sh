@@ -16,7 +16,10 @@ i=1
 while [ $i -le $N ]
 do
 	HADOOP_SLAVE="$HOST_PREFIX"-slave-$i
-	docker run --name $HADOOP_SLAVE -v /opt/spark-apps:/opt/spark-apps -v /opt/spark-data:/opt/spark-data -v /opt/java:/opt/java -h $HADOOP_SLAVE --net=$NETWORK_NAME -itd "$IMG_NAME" 
+	docker run --name $HADOOP_SLAVE \
+				-v /opt/spark-apps:/opt/spark-apps \
+				-v /opt/spark-data:/opt/spark-data \
+				-h $HADOOP_SLAVE --net=$NETWORK_NAME -itd "$IMG_NAME"
 	i=$(( $i + 1 ))
 done
 
@@ -24,11 +27,10 @@ done
 
 HADOOP_MASTER="$HOST_PREFIX"-master
 docker run --name $HADOOP_MASTER -h $HADOOP_MASTER --net=$NETWORK_NAME \
-		-p  8088:8088  -p 50070:50070 -p 50090:50090 \
+		-p  8088:8088  -p 50070:50070 -p 50090:50090 -p 4040:4040 \
 		-p  8080:8080 \
 		-v /opt/spark-apps:/opt/spark-apps \
 		-v /opt/spark-data:/opt/spark-data \
-		-v /opt/java:/opt/java \
 		-itd "$IMG_NAME"
 
 

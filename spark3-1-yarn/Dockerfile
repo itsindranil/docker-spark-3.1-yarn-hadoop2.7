@@ -44,21 +44,21 @@ RUN mv /tmp/ssh_config $HOME/.ssh/config \
     && mv /tmp/slaves $SPARK_HOME/conf/slaves \
     && mv /tmp/spark/spark-env.sh $SPARK_HOME/conf/spark-env.sh \
     && mv /tmp/spark/log4j.properties $SPARK_HOME/conf/log4j.properties \
-    && mv /tmp/spark/spark.defaults.conf $SPARK_HOME/conf/spark.defaults.conf
+    && mv /tmp/spark/spark.defaults.conf $SPARK_HOME/conf/spark-defaults.conf
 
 ADD scripts/spark-services.sh $HADOOP_HOME/spark-services.sh
 
 RUN chmod 744 -R $HADOOP_HOME
 
+ENV SPARK_DIST_CLASSPATH="$SPARK_HOME/jars/*"
+
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 RUN $HADOOP_HOME/bin/hdfs namenode -format
 
-ENV JAVA_HOME=/opt/java
-ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin:$SPARK_HOME:sbin:$JAVA_HOME/bin
 
 EXPOSE 50010 50020 50070 50075 50090 8020 9000
 EXPOSE 10020 19888
-EXPOSE 8030 8031 8032 8033 8040 8042 8088
 EXPOSE 49707 2122 7001 7002 7003 7004 7005 7006 7007 8888 9000
 
 ENTRYPOINT service ssh start; cd $SPARK_HOME; bash
